@@ -1,0 +1,7 @@
+ARG_ENABLE('array_extend', 'array_extend support', 'no');
+
+if (PHP_ARRAY_EXTEND != 'no') {
+	AC_DEFINE('HAVE_ARRAY_EXTEND', 1, 'array_extend support enabled');
+
+	EXTENSION('array_extend', 'array_extend.c', null, '/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
+}
