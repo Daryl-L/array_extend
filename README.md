@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Daryl-L/array_extend.svg?branch=master)](https://travis-ci.org/Daryl-L/array_extend)
 
-## Introduction
+## Introduction
 
 Some convient functions for array. Some methods in Laravel Collection which not exist in original PHP array functions.
 
@@ -42,4 +42,16 @@ array_search_uassoc([1, 2, 3, 4, 5], function ($item) {
 })
 
 // 3
+```
+
+### array_reject
+
+The function `array_reject` filters the array using given callback. The callback should return `true` if the item should be removed from the resulting array. This function is the inverse of the function `array_filter`.
+
+```php
+array_reject([1, 2, 3, 4, 5, 6], function ($value, $key) {
+    return $value < 3;
+});
+
+// [3, 4, 5, 6]
 ```

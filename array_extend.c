@@ -106,6 +106,48 @@ PHP_FUNCTION(array_search_uassoc)
 	RETURN_FALSE;
 }
 
+PHP_FUNCTION(array_reject)
+{
+	zval *input = NULL;
+	zend_array *ht;
+	zend_ulong h;
+	zend_string *key;
+	zval *item;
+	zend_fcall_info fci;
+	zend_fcall_info_cache fci_cache = empty_fcall_info_cache;
+	zval args[2];
+	zval fci_retval;
+	
+	array_init(return_value);
+
+	ZEND_PARSE_PARAMETERS_START(0, 2)
+		Z_PARAM_ARRAY(input)
+		Z_PARAM_FUNC(fci, fci_cache)
+	ZEND_PARSE_PARAMETERS_END();
+
+	ht = Z_ARRVAL_P(input);
+
+	ZEND_HASH_FOREACH_KEY_VAL(ht, h, key, item) {
+		ZVAL_COPY(&args[0], item);
+		if (key)
+		{
+			ZVAL_STR(&args[1], key);
+		}
+		else
+		{
+			ZVAL_LONG(&args[1], h);
+		}
+		zend_fcall_info_argp(&fci, 2, args);
+		zend_fcall_info_call(&fci, &fci_cache, &fci_retval, NULL);
+		if (Z_TYPE_INFO(fci_retval) == IS_FALSE)
+		{
+			key ? 
+			add_assoc_zval(return_value, ZSTR_VAL(key), item) : 
+			add_index_zval(return_value, h, item);
+		}
+	} ZEND_HASH_FOREACH_END();
+}
+
 /* {{{ PHP_RINIT_FUNCTION
  */
 PHP_RINIT_FUNCTION(array_extend)
@@ -148,6 +190,7 @@ const zend_function_entry array_extend_functions[] = {
 	PHP_FE(array_extend_test2,		arginfo_array_extend_test2)
 	PHP_FE(array_every,             NULL)
 	PHP_FE(array_search_uassoc,     NULL)
+	PHP_FE(array_reject,            NULL)
 	PHP_FE_END
 };
 /* }}} */
